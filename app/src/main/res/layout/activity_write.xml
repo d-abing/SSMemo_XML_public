@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/writeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:scrollbarSize="24sp"
+    android:verticalScrollbarPosition="defaultPosition"
+    tools:context=".common.WriteActivity">
+
+
+    <Spinner
+        android:id="@+id/category"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_spinner"
+        android:maxHeight="20dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical"
+        android:verticalScrollbarPosition="right"
+        app:layout_constraintEnd_toStartOf="@+id/saveMemo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/writeTitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/saveMemo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitCenter"
+        android:src="@drawable/save1"
+        app:layout_constraintEnd_toEndOf="@+id/writeTitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/writeTitle"
+        android:layout_width="358dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/title"
+        android:inputType="textPersonName"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/writeContent"
+        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintStart_toStartOf="@+id/writeContent"
+        app:layout_constraintTop_toBottomOf="@+id/category" />
+
+    <com.aube.ssgmemo.etc.BackPressEditText
+        android:id="@+id/writeContent"
+        android:layout_width="358dp"
+        android:layout_height="529dp"
+        android:autoLink="web"
+        android:background="#1AEDC089"
+        android:cursorVisible="true"
+        android:gravity="top"
+        android:hint="@string/write_hint"
+        android:inputType="textMultiLine|textNoSuggestions|textPhonetic"
+        android:lineSpacingExtra="5sp"
+        android:linksClickable="true"
+        android:padding="10dp"
+        android:scrollbars="vertical"
+        android:textColorHint="#A1A1A1"
+        android:textIsSelectable="true"
+        android:textSize="20dp"
+        android:autoSizeTextType="uniform"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/writeTitle" />
+
+    <ImageButton
+        android:id="@+id/btn_Delete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="9dp"
+        android:background="#00FFFFFF"
+        android:paddingLeft="7dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="8dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/saveMemo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/delete3" />
+
+    <LinearLayout
+        android:id="@+id/moreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="140dp"
+        android:layout_marginTop="8dp"
+        android:background="#00F4F4F4"
+        android:backgroundTint="#FFFFFF"
+        android:orientation="vertical"
+        android:translationY="-46dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/saveMemo"
+        app:layout_constraintTop_toBottomOf="@+id/saveMemo">
+
+        <ImageButton
+            android:id="@+id/btn_Share"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="8dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/share" />
+
+        <ImageButton
+            android:id="@+id/btn_copy"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            android:translationY="-47dp"
+            app:srcCompat="@drawable/copy" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fontBar"
+        android:layout_width="0dp"
+        android:layout_height="49dp"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/bold"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/bold" />
+
+        <ImageButton
+            android:id="@+id/italic"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/italic" />
+
+        <ImageButton
+            android:id="@+id/underline"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/underline" />
+
+        <ImageButton
+            android:id="@+id/checklist"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/square"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/left_align"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/left_align" />
+
+        <ImageButton
+            android:id="@+id/center_align"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/center_align" />
+
+        <ImageButton
+            android:id="@+id/right_align"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/right_align" />
+
+        <ImageButton
+            android:id="@+id/sizedown"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingLeft="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/size_down" />
+
+        <Spinner
+            android:id="@+id/fontSize"
+            android:layout_width="95dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            android:textAlignment="center" />
+
+        <ImageButton
+            android:id="@+id/sizeup"
+            android:layout_width="85dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:paddingRight="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/size_up" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/adView"
+        android:layout_width="412dp"
+        android:layout_height="49dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnMode"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        android:background="#00FFFFFF"
+        android:padding="3dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/btn_Delete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/read" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

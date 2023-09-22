@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">쓱싹메모</string>
+    <string name="empty_memo">분류할 메모가 없습니다</string>
+    <string name="empty_searchResult">검색 결과가 없습니다</string>
+    <string name="search">메모를 검색하세요</string>
+    <string name="empty_category">카테고리가 비어있습니다</string>
+    <string name="write_hint">이곳을 눌러 글을 작성합니다</string>
+    <string name="write">쓰기</string>
+    <string name="view">보기</string>
+    <string name="classify">분류</string>
+    <string name="complete">완료</string>
+    <string name="select_all">전체선택</string>
+    <string name="move">이동</string>
+    <string name="delete">삭제</string>
+    <string name="title">제목</string>
+    <string name="complete_dialog">완료 메모로 등록합니다\n완료된 메모는 수정할 수 없습니다</string>
+    <string name="yes">확인</string>
+    <string name="no">취소</string>
+    <string name="category_dialog">카테고리 이름을 입력하세요</string>
+    <string name="ctgr_delete_dialog">삭제 방법을 선택하세요</string>
+    <string name="only_ctgr">카테고리만 삭제 (미분류로 이동)</string>
+    <string name="also_memo">메모까지 삭제</string>\
+    <string name="memo_delete_dialog">메모가 삭제됩니다</string>
+    <string name="memo_move_dialog">이동할 카테고리를 선택해 주세요</string>
+    <string name="setting">설정</string>
+    <string name="vibration">진동</string>
+    <string name="big_textsize">큰 글씨 쓰기</string>
+    <string name="darkmode">다크모드</string>
+    <string name="memofont">메모 글씨체</string>
+    <string name="fontexam">메모의 제목과 본문에\n이 글씨체가 적용됩니다</string>
+    <string name="privacy">개인정보처리방침</string>
+</resources>
+

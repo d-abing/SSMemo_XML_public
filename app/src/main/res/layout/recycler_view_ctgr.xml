@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ctgr_item"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:layout_gravity="top|center_vertical">
+
+    <ImageView
+        android:id="@+id/ctgr_btn"
+        android:layout_width="170dp"
+        android:layout_height="55dp"
+        android:background="@drawable/ctgrback1"
+        android:focusable="auto"
+        android:focusableInTouchMode="false"
+        android:textColor="#000000"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.55" />
+
+    <com.aube.ssgmemo.etc.BackPressEditText
+        android:id="@+id/txtCtgr2"
+        android:layout_width="115dp"
+        android:layout_height="48dp"
+        android:background="@null"
+        android:clickable="false"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textSize="18sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/ctgr_btn"
+        app:layout_constraintEnd_toEndOf="@+id/ctgr_btn"
+        app:layout_constraintHorizontal_bias="0.545"
+        app:layout_constraintStart_toStartOf="@+id/ctgr_btn"
+        app:layout_constraintTop_toTopOf="@+id/ctgr_btn"
+        app:layout_constraintVertical_bias="0.428" />
+
+    <ImageButton
+        android:id="@+id/delete"
+        android:layout_width="30dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="7dp"
+        android:background="#00ECECEC"
+        android:padding="6sp"
+        android:scaleType="fitEnd"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/ctgr_btn"
+        app:layout_constraintEnd_toEndOf="@+id/ctgr_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ctgr_btn"
+        app:layout_constraintTop_toTopOf="@+id/ctgr_btn"
+        app:layout_constraintVertical_bias="0.318"
+        app:srcCompat="@drawable/close" />
+
+    <TextView
+        android:id="@+id/txtCtgr3"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLength="10"
+        android:singleLine="true"
+        android:textColor="#FF000000"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ctgr_btn"
+        app:layout_constraintEnd_toEndOf="@+id/ctgr_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ctgr_btn"
+        app:layout_constraintTop_toTopOf="@+id/ctgr_btn"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/memoCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
+        android:textAlignment="textEnd"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ctgr_btn"
+        app:layout_constraintEnd_toEndOf="@+id/ctgr_btn" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
