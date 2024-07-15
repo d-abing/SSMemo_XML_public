@@ -15,9 +15,9 @@ import com.aube.ssgmemo.callback.CallbackListener
 import com.aube.ssgmemo.databinding.FragmentCtgrAddBinding
 import com.aube.ssgmemo.etc.MyApplication
 
-class CtgrAddFragment(val listener: CallbackListener) : DialogFragment(){
+class CtgrAddFragment(val listener: CallbackListener) : DialogFragment() {
     private lateinit var binding: FragmentCtgrAddBinding
-    private var darkmode = MyApplication.prefs.getString("darkmode", "0").toInt()
+    private var darkmode = MyApplication.prefs.getInt("darkmode", 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class CtgrAddFragment(val listener: CallbackListener) : DialogFragment(){
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         binding = FragmentCtgrAddBinding.inflate(inflater, container, false)
@@ -38,13 +38,14 @@ class CtgrAddFragment(val listener: CallbackListener) : DialogFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (darkmode == 32 ) {
+        if (darkmode == 32) {
             binding.ctgrAddFLayout.setBackgroundResource(R.drawable.fragment_decoration2)
         }
 
         binding.ctgrname.postDelayed({
             binding.ctgrname.requestFocus()
-            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.ctgrname, InputMethodManager.SHOW_IMPLICIT)
         }, 100)
 

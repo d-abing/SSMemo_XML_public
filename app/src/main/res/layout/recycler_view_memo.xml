@@ -12,13 +12,12 @@
         android:background="@null"
         tools:ignore="MissingConstraints">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btnComplete"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="start|center_vertical"
-            android:layout_marginLeft="8dp"
-            android:background="#00FFFFFF"
+            android:layout_marginStart="13dp"
             android:scaleType="fitXY"
             android:src="@drawable/complete" />
 
@@ -27,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="9dp"
             android:checked="false"
             android:text="@null"
             android:visibility="gone" />
@@ -37,46 +36,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/memoback1"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:paddingVertical="10dp">
 
             <TextView
-                android:id="@+id/searchTitle2"
-                android:layout_width="250dp"
+                android:id="@+id/memoTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
                 android:maxLines="1"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toStartOf="@+id/searchDate2"
-                app:layout_constraintHorizontal_bias="0.175"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/searchContent2"
-                android:layout_width="250dp"
+                android:id="@+id/memoContent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="10dp"
                 android:maxLines="1"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/searchDate2"
-                app:layout_constraintHorizontal_bias="0.175"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/searchTitle2"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/memoTitle" />
 
-            <TextView
-                android:id="@+id/searchDate2"
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.82" />
+
+            <TextView
+                android:id="@+id/memoDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
                 android:textAlignment="textEnd"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

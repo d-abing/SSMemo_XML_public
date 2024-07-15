@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="orange">#EEC18A</color>
     <color name="gray">#FFF2F2F2</color>
-    <color name="darkgray">#C0B9AF</color>
-    <color name="dkgray">#747474</color>
+    <color name="lightgray">#C0B9AF</color>
+    <color name="darkgray">#747474</color>
+    <color name="adview_background">#FFFFFF</color>
 </resources>

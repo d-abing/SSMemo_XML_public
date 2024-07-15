@@ -5,14 +5,16 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.util.Linkify
-import android.text.util.Linkify.TransformFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.aube.ssgmemo.R
 import com.aube.ssgmemo.common.MainActivity
@@ -21,113 +23,140 @@ import com.aube.ssgmemo.etc.MyApplication
 import java.util.regex.Pattern
 
 
-class SettingFragment() : Fragment(),  MainActivity.onBackPressedListener {
-    lateinit var mainActivity: MainActivity
+class SettingFragment : Fragment(), MainActivity.OnBackPressedListener {
+    private lateinit var mainActivity: MainActivity
+    private lateinit var binding: FragmentSettingBinding
+
+    private val preferences = MyApplication.prefs
+    private var vibration = preferences.getString("vibration", "OFF")
+    private var darkmode = preferences.getInt("darkmode", 16)
+    private var largeFont = preferences.getString("largeFont", "OFF")
+    private var memoFont = preferences.getString("memofont", "")
+
+    private val memoFontMap =
+        mapOf(
+            "기본" to "",
+            "강원교육모두체" to "kangwon",
+            "KBIZ한마음명조체" to "kbiz",
+            "고운바탕" to "gowun",
+            "교보손글씨 2020 박도연" to "kyobo",
+            "마포꽃섬" to "mapo",
+            "오뮤 다예쁨체" to "omyu"
+        )
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is MainActivity)	mainActivity = context
+        if (context is MainActivity) {
+            mainActivity = context
+        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentSettingBinding.inflate(inflater, container, false)
-        binding.btnSetting2.setOnClickListener {
-            onBackPressed()
-        }
-
-        val dpi = resources.displayMetrics.densityDpi
-        val layoutParams = binding.setting.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.topMargin = (-1.75 * dpi + 1085).toInt()
-        binding.setting.layoutParams = layoutParams
-
-        // 앱 설정 확인 후 switch에 적용
-        if(mainActivity.vibration.equals("ON")) { // 진동
-            binding.switchVibrate.isChecked = true
-        }
-        if(mainActivity.fontSize.equals("ON")) { // 큰 글씨
-            binding.switchFontSize.isChecked = true
-        }
-        if(mainActivity.darkmode == Configuration.UI_MODE_NIGHT_YES) { // 다크모드
-            binding.settingLayout.setBackgroundColor(Color.DKGRAY)
-            binding.switchDarkmode.isChecked = true
-        }
-
-
-        // switch ChangeListener
-        binding.switchVibrate.setOnCheckedChangeListener { _, ischecked -> // 진동
-            if (ischecked) {
-                MyApplication.prefs.setString("vibration", "ON")
-                mainActivity.vibration = "ON"
-
-            } else {
-                MyApplication.prefs.setString("vibration", "OFF")
-                mainActivity.vibration = "OFF"
-            }
-        }
-        binding.switchFontSize.setOnCheckedChangeListener { _, ischecked -> // 큰 글씨
-            if(ischecked) {
-                MyApplication.prefs.setString("fontSize", "ON")
-                MyApplication.prefs.setString("textFontSize", "26")
-                mainActivity.fontSize = "ON"
-            } else {
-                MyApplication.prefs.setString("fontSize", "OFF")
-                MyApplication.prefs.setString("textFontSize", "20")
-                mainActivity.fontSize = "OFF"
-            }
-        }
-
-        binding.switchDarkmode.setOnCheckedChangeListener { _, ischecked -> // 다크모드
-            if(ischecked) {
-                MyApplication.prefs.setString("darkmode", "32")
-                mainActivity.darkmode = 32
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-            } else {
-                MyApplication.prefs.setString("darkmode", "16")
-                mainActivity.darkmode = 16
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
-
-        val memofont = listOf("기본", "강원교육모두체", "KBIZ한마음명조체", "고운바탕", "교보손글씨 2020 박도연", "마포꽃섬", "오뮤 다예쁨체")
-        binding.memofont.adapter = ArrayAdapter(requireContext(), R.layout.spinner_layout, memofont.toMutableList())
-        binding.memofont.setSelection(memofont.indexOf(mainActivity.memofont))
-        binding.memofont.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                var fontname = ""
-                 when (position) {
-                     0 -> fontname = ""
-                     1 -> fontname = "kangwon"
-                     2 -> fontname = "kbiz"
-                     3 -> fontname = "gowun"
-                     4 -> fontname = "kyobo"
-                     5 -> fontname = "mapo"
-                     6 -> fontname = "omyu"
-                }
-                MyApplication.prefs.setString("memofont", fontname)
-                if (!fontname.equals("")) {
-                    val typeface = Typeface.createFromAsset(mainActivity.assets, "font/" + fontname + ".ttf")
-                    binding.fontexam.typeface = typeface
-                } else {
-                    binding.fontexam.typeface = Typeface.DEFAULT
-                }
-                mainActivity.memofont = binding.memofont.getItemAtPosition(position).toString()
-            }
-        }
-
-        val linktest = TransformFilter { match, url -> "" }
-        val pattern: Pattern = Pattern.compile("개인정보처리방침")
-        Linkify.addLinks(binding.textView, pattern, "https://aubeco.tistory.com/1", null, linktest)
-
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
+        binding.root.setOnTouchListener { _, _ -> true }
+        setupUI()
+        setupListeners()
+        applySettings()
 
         return binding.root
     }
 
-    // 뒤로 가기
+    private fun setupUI() {
+        binding.btnSetting.setOnClickListener {
+            onBackPressed()
+        }
+
+        Linkify.addLinks(
+            binding.textView,
+            Pattern.compile("개인정보처리방침"),
+            "https://aubeco2.blogspot.com/2024/01/blog-post.html",
+            null
+        ) { _, _ -> "" }
+    }
+
+    private fun setupListeners() {
+        binding.switchVibrate.setOnCheckedChangeListener { _, isChecked ->
+            updatePreference("vibration", if (isChecked) "ON" else "OFF")
+            vibration = if (isChecked) "ON" else "OFF"
+
+            if (vibration == "ON") {
+                val vibrator =
+                    requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                vibrator.vibrate(VibrationEffect.createOneShot(200, 50))
+            }
+        }
+
+        binding.switchFontSize.setOnCheckedChangeListener { _, isChecked ->
+            updatePreference("largeFont", if (isChecked) "ON" else "OFF")
+            updatePreference("fontSize", if (isChecked) 26 else 20)
+            largeFont = if (isChecked) "ON" else "OFF"
+        }
+
+        binding.switchDarkmode.setOnCheckedChangeListener { _, isChecked ->
+            updatePreference("darkmode", if (isChecked) 32 else 16)
+            darkmode = if (isChecked) 32 else 16
+            AppCompatDelegate.setDefaultNightMode(
+                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
+
+
+        binding.memofont.adapter =
+            ArrayAdapter(
+                requireContext(),
+                R.layout.item_condition_spinner,
+                memoFontMap.keys.toList()
+            )
+        binding.memofont.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                memoFontMap[memoFontMap.keys.toList()[position]]?.let { updateFont(it) }
+            }
+        }
+    }
+
+    private fun applySettings() {
+        binding.switchVibrate.isChecked = vibration == "ON"
+        binding.switchFontSize.isChecked = largeFont == "ON"
+        binding.switchDarkmode.isChecked = darkmode == Configuration.UI_MODE_NIGHT_YES
+
+        if (darkmode == Configuration.UI_MODE_NIGHT_YES) {
+            binding.settingLayout.setBackgroundColor(Color.DKGRAY)
+            val drawable =
+                ContextCompat.getDrawable(requireContext(), R.drawable.baseline_settings_24)
+            drawable?.setTint(ContextCompat.getColor(requireContext(), R.color.lightgray))
+            binding.btnSetting.setImageDrawable(drawable)
+        }
+        binding.memofont.setSelection(memoFontMap.values.indexOf(memoFont))
+    }
+
+    private fun updatePreference(key: String, value: Any) {
+        if (value is String) {
+            MyApplication.prefs.setString(key, value)
+        } else if (value is Int) {
+            MyApplication.prefs.setInt(key, value)
+        }
+    }
+
+    private fun updateFont(memoFont: String) {
+        updatePreference("memofont", memoFont)
+
+        val typeface = if (memoFont.isNotEmpty()) {
+            Typeface.createFromAsset(mainActivity.assets, "font/$memoFont.ttf")
+        } else {
+            Typeface.DEFAULT
+        }
+        binding.fontexam.typeface = typeface
+    }
+
     override fun onBackPressed() {
         requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
     }

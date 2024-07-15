@@ -65,7 +65,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/yes"
-            android:textColor="@color/black"
+            android:textColor="@color/orange"
             android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

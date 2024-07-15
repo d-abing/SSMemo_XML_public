@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import com.aube.ssgmemo.Memo
 import com.aube.ssgmemo.R
 import com.aube.ssgmemo.SqliteHelper
@@ -21,184 +22,189 @@ import com.aube.ssgmemo.fragment.SettingFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    var vibration = MyApplication.prefs.getString("vibration", "")
-    var fontSize = MyApplication.prefs.getString("fontSize", "")
-    var darkmode: Int = MyApplication.prefs.getString("darkmode", "0").toInt()
-    var firstCreate = MyApplication.prefs.getString("firstCreate", "o")
-    var memofont = MyApplication.prefs.getString("memofont", "")
+
+    private val preferences = MyApplication.prefs
+    private var vibration = preferences.getString("vibration", "OFF")
+    private var darkmode = preferences.getInt("darkmode", 16)
+    private var firstCreate = preferences.getString("firstCreate", "o")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (firstCreate.equals("o")) {
-            val helper = SqliteHelper(this, "ssgMemo", 1)
-            val memo = Memo(
-                null,
-                "생각정리 메모장 쓱싹메모\uD83E\uDD14",
-                "<p dir=\"ltr\">&#50417;&#49913;-&#129529; &#49373;&#44033;&#51012; &#51221;&#47532;&#54616;&#44256; &#49910;&#51012; &#46412; &#49324;&#50857;&#54616;&#49464;&#50836;<br>\n" +
-                        "&#9999;&#65039; [&#50416;&#44592;] &#50640;&#49436; &#49373;&#44033;&#51012; &#51088;&#50976;&#47213;&#44172; &#54364;&#54788;&#54616;&#49464;&#50836;<br>\n" +
-                        "&#128230; [&#48516;&#47448;] &#50640;&#49436; &#54868;&#49332;&#54364; &#48169;&#54693;&#51004;&#47196; &#54868;&#47732;&#51012; &#50424;&#50612; &#48516;&#47448;&#54616;&#44256; &#49910;&#51008; &#47700;&#47784;&#47484; &#44256;&#47476;&#44256; &#52852;&#53580;&#44256;&#47532; &#49345;&#51088;&#47484; &#45580;&#47084; &#44036;&#54200;&#54616;&#44172; &#48516;&#47448;&#54624; &#49688; &#51080;&#49845;&#45768;&#45796;<br>\n" +
-                        "&#128209; [&#48372;&#44592;] &#50640;&#49436; &#48516;&#47448;&#46108; &#47700;&#47784;&#46308;&#51012; &#54869;&#51064;&#54616;&#44256; &#47700;&#47784;&#47484; &#44985; &#45580;&#47084; &#49692;&#49436;&#47484; &#48320;&#44221;&#54624; &#49688; &#51080;&#49845;&#45768;&#45796;. &#50756;&#47308; &#47700;&#47784;&#47196; &#46321;&#47197;&#54616;&#44256; &#49910;&#45796;&#47732; &#47785;&#47197;&#50640;&#49436; &#47700;&#47784;&#47484; &#50724;&#47480;&#51901;&#51004;&#47196; &#48128;&#50612; &#50756;&#47308; &#48260;&#53948;&#51012; &#45580;&#47084;&#51469;&#45768;&#45796;.<br>\n" +
-                        "&#9971;&#65039; [&#50756;&#47308;] &#50640; &#51221;&#47532;&#46108; &#49373;&#44033;&#46308;&#51012; &#47784;&#50500; &#48372;&#44256; &#49910;&#51012; &#46412;&#47560;&#45796; &#54869;&#51064;&#54644; &#48372;&#49464;&#50836;</p>",
-                "8388659,20",
-                System.currentTimeMillis(),
-                0,
-                1,
-                1
-            )
-            helper.insertMemo(memo)
-            MyApplication.prefs.setString("firstCreate", "x")
-        }
 
-        // 설정 fragment
-        binding.btnSetting1.setOnClickListener {
-            supportFragmentManager.beginTransaction().add(R.id.frameLayout, SettingFragment())
+        if (firstCreate == "o") {
+            initializeMemo()
+        }
+        initializeUI()
+        initializeListeners()
+        //initializeAds()
+    }
+
+    private fun initializeMemo() {
+        val helper = SqliteHelper(this, "ssgMemo", 1)
+        val memo = Memo(
+            null,
+            "생각정리 메모장 쓱싹메모\uD83E\uDD14",
+            "<p dir=\"ltr\">&#50417;&#49913;-&#129529; &#49373;&#44033;&#51012; &#51221;&#47532;&#54616;&#44256; &#49910;&#51012; &#46412; &#49324;&#50857;&#54616;&#49464;&#50836;<br>\n" +
+                    "&#9999;&#65039; [&#50416;&#44592;] &#50640;&#49436; &#49373;&#44033;&#51012; &#51088;&#50976;&#47213;&#44172; &#54364;&#54788;&#54616;&#49464;&#50836;<br>\n" +
+                    "&#128230; [&#48516;&#47448;] &#50640;&#49436; &#54868;&#49332;&#54364; &#48169;&#54693;&#51004;&#47196; &#54868;&#47732;&#51012; &#50424;&#50612; &#48516;&#47448;&#54616;&#44256; &#49910;&#51008; &#47700;&#47784;&#47484; &#44256;&#47476;&#44256; &#52852;&#53580;&#44256;&#47532; &#49345;&#51088;&#47484; &#45580;&#47084; &#44036;&#54200;&#54616;&#44172; &#48516;&#47448;&#54624; &#49688; &#51080;&#49845;&#45768;&#45796;<br>\n" +
+                    "&#128209; [&#48372;&#44592;] &#50640;&#49436; &#48516;&#47448;&#46108; &#47700;&#47784;&#46308;&#51012; &#54869;&#51064;&#54616;&#44256; &#47700;&#47784;&#47484; &#44985; &#45580;&#47084; &#49692;&#49436;&#47484; &#48320;&#44221;&#54624; &#49688; &#51080;&#49845;&#45768;&#45796;. &#50756;&#47308; &#47700;&#47784;&#47196; &#46321;&#47197;&#54616;&#44256; &#49910;&#45796;&#47732; &#47785;&#47197;&#50640;&#49436; &#47700;&#47784;&#47484; &#50724;&#47480;&#51901;&#51004;&#47196; &#48128;&#50612; &#50756;&#47308; &#48260;&#53948;&#51012; &#45580;&#47084;&#51469;&#45768;&#45796;.<br>\n" +
+                    "&#9971;&#65039; [&#50756;&#47308;] &#50640; &#51221;&#47532;&#46108; &#49373;&#44033;&#46308;&#51012; &#47784;&#50500; &#48372;&#44256; &#49910;&#51012; &#46412;&#47560;&#45796; &#54869;&#51064;&#54644; &#48372;&#49464;&#50836;</p>",
+            "8388659,20",
+            System.currentTimeMillis(),
+            0,
+            1,
+            1
+        )
+        helper.insertMemo(memo)
+        preferences.setString("firstCreate", "x")
+    }
+
+    private fun initializeUI() {
+        setDarkMode(darkmode == Configuration.UI_MODE_NIGHT_YES)
+
+        binding.btnSetting.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .add(R.id.frameLayout, SettingFragment())
                 .commit()
         }
+    }
 
-        if (darkmode == Configuration.UI_MODE_NIGHT_YES) {
+    private fun setDarkMode(isDarkMode: Boolean) {
+        if (isDarkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             binding.mainLayout.setBackgroundColor(Color.DKGRAY)
             binding.adView.setBackgroundColor(Color.DKGRAY)
+            val drawable = ContextCompat.getDrawable(this, R.drawable.baseline_settings_24)
+            drawable?.setTint(ContextCompat.getColor(this, R.color.lightgray))
+            binding.btnSetting.setImageDrawable(drawable)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+    }
 
-        // memomo 이동 좌표
-        var startX = 0f
-        var startY = 0f
-        var xx = 0f
-        var yy = 0f
-        var coordinatorAdjust = 100f
+    private fun initializeListeners() {
+        binding.memomo.setOnTouchListener(DragTouchListener())
+        binding.write.setOnClickListener { navigateToActivity(WriteActivity::class.java) }
+        binding.view.setOnClickListener { navigateToActivity(ViewCtgrActivity::class.java) }
+        binding.classify.setOnClickListener { navigateToActivity(ClassifyActivity::class.java) }
+        binding.complete.setOnClickListener { navigateToActivity(CompleteActivity::class.java) }
+    }
 
-        // memomo 이동
-        binding.memomo.setOnTouchListener { v, event ->
+    private fun navigateToActivity(activityClass: Class<*>) {
+        val intent = Intent(this, activityClass)
+        startActivity(intent)
+    }
+
+    /*private fun initializeAds() {
+        MobileAds.initialize(this) {}
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
+    }*/
+
+    private inner class DragTouchListener : View.OnTouchListener {
+        // 터치가 시작될 때의 X, Y 좌표
+        private var startX = 0f
+        private var startY = 0f
+
+        // 터치가 시작될 때의 View의 X, Y 좌표
+        private var xx = 0f
+        private var yy = 0f
+
+        override fun onTouch(
+            v: View,
+            event: MotionEvent
+        ): Boolean { // v: 터치 이벤트가 발생한 View, event: 터치 이벤트
             when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
+                MotionEvent.ACTION_DOWN -> { // 터치 시작
                     startX = event.x
                     startY = event.y
                     xx = v.x
                     yy = v.y
                 }
 
-                MotionEvent.ACTION_MOVE -> {
-                    val movedX: Float = event.x - startX
-                    val movedY: Float = event.y - startY
-
-                    v.x = v.x + movedX
-                    v.y = v.y + movedY
+                MotionEvent.ACTION_MOVE -> { // 터치 이동
+                    val movedX = event.x - startX
+                    val movedY = event.y - startY
+                    v.x += movedX
+                    v.y += movedY
                 }
 
-                MotionEvent.ACTION_UP -> {
-                    //TextView의 상대적 좌표
-                    val write: ArrayList<Float> = getRange(binding.write)
-                    val classify: ArrayList<Float> = getRange(binding.classify)
-                    val gather: ArrayList<Float> = getRange(binding.gather)
-                    val complete: ArrayList<Float> = getRange(binding.throwout)
-                    goMenu<WriteActivity>(
-                        v,
-                        v.x + v.width / 2,
-                        v.y + v.height / 2,
-                        write[2] + coordinatorAdjust,
-                        write[0] - coordinatorAdjust,
-                        write[3] + coordinatorAdjust,
-                        write[1] - coordinatorAdjust,
-                        WriteActivity::class.java
-                    )
-                    goMenu<ClassifyActivity>(
-                        v,
-                        v.x + v.width / 2,
-                        v.y + v.height / 2,
-                        classify[2],
-                        classify[0],
-                        classify[3],
-                        classify[1],
-                        ClassifyActivity::class.java
-                    )
-                    goMenu<ViewCtgrActivity>(
-                        v,
-                        v.x + v.width / 2,
-                        v.y + v.height / 2,
-                        gather[2],
-                        gather[0],
-                        gather[3],
-                        gather[1],
-                        ViewCtgrActivity::class.java
-                    )
-                    goMenu<CompleteActivity>(
-                        v,
-                        v.x + v.width / 2,
-                        v.y + v.height / 2,
-                        complete[2],
-                        complete[0],
-                        complete[3],
-                        complete[1],
-                        CompleteActivity::class.java
-                    )
+                MotionEvent.ACTION_UP -> { // 터치 끝
+                    handleDragEnd(v)
                     v.x = xx
                     v.y = yy
                 }
             }
-            true
+            return true
         }
-        binding.write.setOnClickListener {
-            val intent = Intent(this, WriteActivity::class.java)
-            startActivity(intent)
-        }
-        binding.gather.setOnClickListener {
-            val intent = Intent(this, ViewCtgrActivity::class.java)
-            startActivity(intent)
-        }
-        binding.classify.setOnClickListener {
-            val intent = Intent(this, ClassifyActivity::class.java)
-            startActivity(intent)
-        }
-        binding.throwout.setOnClickListener {
-            val intent = Intent(this, CompleteActivity::class.java)
-            startActivity(intent)
-        }
-    }
 
-    // 각 Activity로 이동
-    fun <T> goMenu(
-        v: View, x: Float, y: Float,
-        range1: Float, range2: Float, range3: Float, range4: Float,
-        targetActivity: Class<T>
-    ) {
+        private fun handleDragEnd(v: View) {
+            // 각 메뉴의 View 범위
+            val writeRange = getViewRange(binding.write)
+            val classifyRange = getViewRange(binding.classify)
+            val viewRange = getViewRange(binding.view)
+            val completeRange = getViewRange(binding.complete)
 
-        if (x < range1 && x > range2 && y < range3 && y > range4) {
-            if (vibration.equals("ON")) {
-                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                vibrator.vibrate(VibrationEffect.createOneShot(200, 50))
+            navigateOnDrag(v, writeRange, WriteActivity::class.java)
+            navigateOnDrag(v, classifyRange, ClassifyActivity::class.java)
+            navigateOnDrag(v, viewRange, ViewCtgrActivity::class.java)
+            navigateOnDrag(v, completeRange, CompleteActivity::class.java)
+        }
+
+        private fun getViewRange(view: View): List<Float> {
+            return listOf(view.x, view.y, view.x + view.width, view.y + view.height)
+        }
+
+        private fun <T> navigateOnDrag(v: View, range: List<Float>, targetActivity: Class<T>) {
+            val (startX, startY, endX, endY) = range
+            val viewLeft = v.x
+            val viewTop = v.y
+            val viewRight = v.x + v.width
+            val viewBottom = v.y + v.height
+
+            // Check if any edge of the view intersects with the specified range
+            if (isViewInRange(
+                    viewLeft,
+                    viewTop,
+                    viewRight,
+                    viewBottom,
+                    startX,
+                    startY,
+                    endX,
+                    endY
+                )
+            ) {
+                if (vibration == "ON") {
+                    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    vibrator.vibrate(VibrationEffect.createOneShot(200, 50))
+                }
+
+                navigateToActivity(targetActivity)
             }
+        }
 
-            val intent = Intent(this, targetActivity)
-            startActivity(intent)
+        private fun isViewInRange(
+            viewLeft: Float, viewTop: Float, viewRight: Float, viewBottom: Float,
+            rangeLeft: Float, rangeTop: Float, rangeRight: Float, rangeBottom: Float
+        ): Boolean {
+            return !(viewRight < rangeLeft || viewLeft > rangeRight || viewBottom < rangeTop || viewTop > rangeBottom)
         }
     }
 
-    fun getRange(view: View): ArrayList<Float> {
-        var result: ArrayList<Float> = ArrayList()
-        result.add(view.x)
-        result.add(view.y)
-        result.add(view.x + view.width)
-        result.add(view.y + view.height)
-        return result
-    }
-
-    // 설정 fragment 뒤로가기 시 닫기 구현
-    interface onBackPressedListener {
-        fun onBackPressed()
-    }
-
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (supportFragmentManager.fragments.isNotEmpty()) {
-            (supportFragmentManager.fragments[0] as onBackPressedListener).onBackPressed()
-            return
+        val fragment = supportFragmentManager.fragments.firstOrNull()
+        if (fragment is OnBackPressedListener) {
+            fragment.onBackPressed()
         } else {
             super.onBackPressed()
         }
+    }
+
+    interface OnBackPressedListener {
+        fun onBackPressed()
     }
 }

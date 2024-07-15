@@ -9,9 +9,4 @@
         <!-- Customize your theme here. -->
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor" tools:targetApi="l">#FFEEEEEE</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:windowBackground">@drawable/memomoicon</item>
-    </style>
 </resources>

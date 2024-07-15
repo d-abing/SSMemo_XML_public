@@ -3,21 +3,19 @@ package com.aube.ssgmemo.fragment
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import com.aube.ssgmemo.R
-import com.aube.ssgmemo.SqliteHelper
 import com.aube.ssgmemo.callback.CallbackListener
 import com.aube.ssgmemo.databinding.FragmentCompleteBinding
 import com.aube.ssgmemo.etc.MyApplication
 
 class CompleteFragment(var listener: CallbackListener) : DialogFragment() {
     private lateinit var binding: FragmentCompleteBinding
-    private var darkmode = MyApplication.prefs.getString("darkmode", "0").toInt()
+    private var darkmode = MyApplication.prefs.getInt("darkmode", 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +26,7 @@ class CompleteFragment(var listener: CallbackListener) : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         binding = FragmentCompleteBinding.inflate(inflater, container, false)
@@ -40,7 +38,7 @@ class CompleteFragment(var listener: CallbackListener) : DialogFragment() {
         val bundle: Bundle? = arguments
         val memoIdx: Int? = bundle?.getInt("memoIdx")
 
-        if (darkmode == 32 ) {
+        if (darkmode == 32) {
             binding.completeFLayout.setBackgroundResource(R.drawable.fragment_decoration2)
         }
 
@@ -49,7 +47,11 @@ class CompleteFragment(var listener: CallbackListener) : DialogFragment() {
         }
 
         binding.dialogMemoCompleteYes.setOnClickListener {
-            listener.completeMemo(memoIdx!!)
+            if (memoIdx != null) {
+                listener.completeMemo(memoIdx)
+            } else {
+                listener.completeMemoList()
+            }
             dismiss()
         }
     }

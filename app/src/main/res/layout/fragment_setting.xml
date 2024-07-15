@@ -14,103 +14,86 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/btn_setting2"
+        <ImageView
+            android:id="@+id/btn_setting"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
-            android:background="#00FFFFFF"
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/settings" />
+            app:srcCompat="@drawable/baseline_settings_24" />
 
-        <TextView
-            android:id="@+id/setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="110dp"
-            android:text="@string/setting"
-            android:textSize="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <Switch
-            android:id="@+id/switchVibrate"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="148dp"
-            android:text="@string/vibration"
-            android:textAlignment="viewStart"
-            android:textSize="25sp"
-            android:theme="@style/sw_mainColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setting" />
-
-        <Switch
-            android:id="@+id/switchFontSize"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="148dp"
-            android:text="@string/big_textsize"
-            android:textAlignment="viewStart"
-            android:textSize="25sp"
-            android:theme="@style/sw_mainColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switchVibrate" />
-
-        <Switch
-            android:id="@+id/switchDarkmode"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="148dp"
-            android:text="@string/darkmode"
-            android:textAlignment="viewStart"
-            android:textSize="25sp"
-            android:theme="@style/sw_mainColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switchFontSize" />
-
-        <Spinner
-            android:id="@+id/memofont"
-            android:layout_width="193dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/memofonts" />
-
-        <TextView
-            android:id="@+id/memofonts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/memofont"
-            android:textColor="#000000"
-            android:textSize="25sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.477"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switchDarkmode" />
-
-        <TextView
-            android:id="@+id/fontexam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/fontexam"
-            android:textSize="20dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/memofont"
-            app:layout_constraintVertical_bias="0.075" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting"
+                android:textSize="48dp" />
+
+            <Switch
+                android:id="@+id/switchVibrate"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="50dp"
+                android:text="@string/vibration"
+                android:textSize="20sp"
+                android:theme="@style/sw_mainColor" />
+
+            <Switch
+                android:id="@+id/switchFontSize"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/big_textsize"
+                android:textSize="20sp"
+                android:theme="@style/sw_mainColor" />
+
+            <Switch
+                android:id="@+id/switchDarkmode"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/darkmode"
+                android:textSize="20sp"
+                android:theme="@style/sw_mainColor" />
+
+            <TextView
+                android:id="@+id/memofonts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="@string/memofont"
+                android:textColor="@color/material_on_background_emphasis_high_type"
+                android:textSize="20sp" />
+
+            <Spinner
+                android:id="@+id/memofont"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/fontexam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20sp"
+                android:text="@string/fontexam"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView"
@@ -124,6 +107,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

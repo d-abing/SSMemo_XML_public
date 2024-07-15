@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">쓱싹메모</string>
+    <string name="admob_app_id">-</string>
+    <string name="banner_ad_unit_id">-</string>
     <string name="empty_memo">분류할 메모가 없습니다</string>
     <string name="empty_searchResult">검색 결과가 없습니다</string>
     <string name="search">메모를 검색하세요</string>

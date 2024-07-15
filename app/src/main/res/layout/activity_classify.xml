@@ -11,16 +11,16 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerClassifyCtgr"
         android:layout_width="0dp"
-        android:layout_height="350dp"
+        android:layout_height="0dp"
         android:background="#EDE3D6"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         app:layout_constraintBottom_toTopOf="@+id/adView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        tools:itemCount="20"
         tools:layoutManager="GridLayoutManager"
         tools:listitem="@layout/recycler_classify_ctgr"
         tools:spanCount="4" />
@@ -31,6 +31,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerClassifyCtgr"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.53"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -47,34 +48,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/viewpager" />
 
-    <ImageButton
+    <View
         android:id="@+id/adView"
-        android:layout_width="412dp"
+        android:layout_width="0dp"
         android:layout_height="49dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="#FFFFFF"
+        android:background="@color/adview_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/btnDelete"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="10dp"
-        android:background="#00FFFFFF"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/recyclerClassifyCtgr"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/delete" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/next"
         android:layout_width="40dp"
         android:layout_height="76dp"
-        android:background="#00FFFFFF"
         android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/recyclerClassifyCtgr"
@@ -82,11 +81,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/right" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/previous"
         android:layout_width="40dp"
         android:layout_height="76dp"
-        android:background="#00FFFFFF"
         android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/recyclerClassifyCtgr"

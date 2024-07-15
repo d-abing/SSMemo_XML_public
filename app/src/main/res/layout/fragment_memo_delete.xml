@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/memoDeleteFLayout"
-    android:layout_width="300dp"
+    android:layout_width="250dp"
     android:layout_height="wrap_content"
     android:background="@drawable/fragment_decoration"
+    android:elevation="20dp"
     android:gravity="center"
     android:orientation="vertical"
     android:outlineProvider="none">
 
     <TextView
         android:id="@+id/delete_memo_msg"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="54dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
@@ -59,7 +60,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/yes"
-            android:textColor="@color/black"
+            android:textColor="@color/orange"
             android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

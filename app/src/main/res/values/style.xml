@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="toast">
         <item name="stTextBold">true</item>
         <item name="stTextColor">@color/black</item>
-        <item name="stTextSize">18dp</item>
+        <item name="stTextSize">15dp</item>
         <item name="stColorBackground">@color/white</item>
         <item name="stStrokeWidth">3dp</item>
         <item name="stStrokeColor">#fff</item>
         <item name="stIconStart">@drawable/closed_box</item>
         <item name="stIconEnd">@drawable/closed_box</item>
-        <item name="stLength">SHORT</item> LONG or SHORT
-        <item name="stGravity">center</item> top or center
+        <item name="stLength">SHORT</item>
+        LONG or SHORT
+        <item name="stGravity">center</item>
+        top or center
         <item name="stRadius">20dp</item>
     </style>
+
     <style name="sw_mainColor">
         <item name="colorControlActivated">@color/orange</item>
     </style>

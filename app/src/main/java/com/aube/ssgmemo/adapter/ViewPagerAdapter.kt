@@ -1,38 +1,40 @@
-package com.aube.ssgmemo.adapter
-
 import android.content.Context
 import android.graphics.Typeface
 import android.text.Html
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.aube.ssgmemo.Memo
 import com.aube.ssgmemo.databinding.RecyclerClassifyMemoBinding
 import com.aube.ssgmemo.etc.MyApplication
 
-class ViewPagerAdapter(private val context: Context) : RecyclerView.Adapter<ViewPagerAdapter.Holder>() {
-    var listData = mutableListOf<Memo>()
-    private var memofont = MyApplication.prefs.getString("memofont", "")
+class ViewPagerAdapter(private val context: Context) :
+    ListAdapter<Memo, ViewPagerAdapter.Holder>(diffUtil) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : Holder {
-        val binding: ViewBinding = RecyclerClassifyMemoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    private val memofont = MyApplication.prefs.getString("memofont", "")
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+        val binding =
+            RecyclerClassifyMemoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return Holder(binding)
     }
-    override fun getItemCount(): Int = listData.size
+
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val memo: Memo = listData.get(position)
+        val memo = getItem(position)
         holder.setMemo(memo)
     }
-    inner class Holder(val binding: ViewBinding): RecyclerView.ViewHolder(binding.root) {
+
+    inner class Holder(val binding: RecyclerClassifyMemoBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun setMemo(memo: Memo) {
-            (binding as RecyclerClassifyMemoBinding).memoTitle.text = memo.title
+            binding.memoTitle.text = memo.title
 
             // 폰트 설정
-            if (!memofont.equals("")) {
-                val typeface = Typeface.createFromAsset(context.assets, "font/" + memofont + ".ttf")
+            if (!memofont.isNullOrEmpty()) {
+                val typeface = Typeface.createFromAsset(context.assets, "font/$memofont.ttf")
                 binding.memoTitle.typeface = typeface
                 binding.memoContent.typeface = typeface
             }
@@ -42,7 +44,19 @@ class ViewPagerAdapter(private val context: Context) : RecyclerView.Adapter<View
             binding.memoContent.text = Html.fromHtml(memo.content)
             binding.memoContent.movementMethod = ScrollingMovementMethod()
             binding.memoContent.gravity = contentGravity
+        }
+    }
 
+
+    companion object {
+        val diffUtil = object : DiffUtil.ItemCallback<Memo>() {
+            override fun areItemsTheSame(oldItem: Memo, newItem: Memo): Boolean {
+                return oldItem.idx == newItem.idx
+            }
+
+            override fun areContentsTheSame(oldItem: Memo, newItem: Memo): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 }

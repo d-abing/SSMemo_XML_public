@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="main_title_text_size">60sp</dimen>
-    <dimen name="main_menu_text_size">30sp</dimen>
-    <dimen name="arrow_width">35sp</dimen>
-    <dimen name="arrow_height">35sp</dimen>
+    <dimen name="main_title_text_size">50sp</dimen>
+    <dimen name="main_menu_text_size">25sp</dimen>
+    <dimen name="arrow_width">25sp</dimen>
+    <dimen name="arrow_height">25sp</dimen>
     <dimen name="memomo_width">169dp</dimen>
     <dimen name="memomo_height">181dp</dimen>
 </resources>

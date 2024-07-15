@@ -12,65 +12,81 @@
         android:id="@+id/ctgrTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:fontFamily="sans-serif"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.053"
+        android:textColor="#FF000000"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="카테고리명" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerContent1"
-        android:layout_width="366dp"
-        android:layout_height="596dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="24dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:nestedScrollingEnabled="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ctgrTitle"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/imageView2"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerContent1"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <ImageView
+        android:id="@+id/select_btn"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="20dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/ctgrTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.936"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/ctgrTitle"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/check" />
+
+    <ImageView
+        android:id="@+id/line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerMemo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ctgrTitle"
         app:srcCompat="@drawable/line" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMemo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="5dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/adView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        tools:listitem="@layout/recycler_view_memo" />
+
     <TextView
-        android:id="@+id/msgText"
+        android:id="@+id/emptyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/empty_category"
         android:textSize="30dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/recyclerContent1"
+        app:layout_constraintBottom_toBottomOf="@+id/recyclerMemo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.574" />
+        app:layout_constraintTop_toBottomOf="@+id/line" />
 
-    <ImageButton
+    <View
         android:id="@+id/adView"
-        android:layout_width="412dp"
+        android:layout_width="0dp"
         android:layout_height="49dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="#FFFFFF"
+        android:background="@color/adview_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -79,26 +95,60 @@
         android:id="@+id/selectLayout"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="#C0B9AF"
         android:orientation="horizontal"
         android:translationY="50dp"
         android:visibility="visible"
-        android:weightSum="3"
+        android:weightSum="4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/adView"
         app:layout_constraintStart_toStartOf="@+id/adView">
 
         <TextView
             android:id="@+id/select_all"
-            android:layout_width="50dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#3A3A3A"
+            android:background="#C0B9AF"
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/select_all"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/move_selected"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#C0B9AF"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/move"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/complete_selected"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#C0B9AF"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/complete"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
 
         <View
             android:id="@+id/view"
@@ -107,64 +157,29 @@
             android:background="@color/gray" />
 
         <TextView
-            android:id="@+id/move_selected"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#3A3A3A"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="@string/move"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <View
-            android:id="@+id/view4"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/gray" />
-
-        <TextView
             android:id="@+id/delete_selected"
-            android:layout_width="50dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#3A3A3A"
+            android:background="#C0B9AF"
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/delete"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/select_btn"
-        android:layout_width="25dp"
-        android:layout_height="24dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="2dp"
-        android:background="#00FFFFFF"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/ctgrTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.936"
-        app:layout_constraintStart_toEndOf="@+id/ctgrTitle"
-        app:layout_constraintTop_toTopOf="@+id/ctgrTitle"
-        app:layout_constraintVertical_bias="0.5"
-        app:srcCompat="@drawable/check" />
-
-    <ImageButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addMemo"
-        android:layout_width="86dp"
-        android:layout_height="82dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#00FFFFFF"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@+id/recyclerContent1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/white"
+        app:borderWidth="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/adView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.996"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/add2" />
+        app:srcCompat="@drawable/baseline_create_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
