@@ -3,13 +3,18 @@ package com.aube.ssgmemo.common
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Html
 import android.text.SpannableString
+import android.text.method.KeyListener
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import com.aube.ssgmemo.Memo
 import com.aube.ssgmemo.R
@@ -27,6 +32,8 @@ class EditActivity : BaseWriteActivity(), CallbackListener {
     private var mCtgr: Int = 0
     private var readmode = false
     private var more = false
+
+    private var originalKeyListener: KeyListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +57,13 @@ class EditActivity : BaseWriteActivity(), CallbackListener {
             StyleableToast.makeText(this, "클립보드에 복사되었습니다", R.style.toast).show()
         }
         setupWriteContentTouchListener()
+    }
+
+    private fun copyToClipboard(text: String) { // 클립보드에 복사
+        val clipboardManager =
+            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("label", text)
+        clipboardManager.setPrimaryClip(clipData)
     }
 
     private fun setupWriteContentTouchListener() {
@@ -122,11 +136,10 @@ class EditActivity : BaseWriteActivity(), CallbackListener {
         binding.writeContent.gravity = contentGravity
         binding.writeContent.textSize = contentSize
 
-        setupMemoStatus(memo)
+        applyMemoStatus(memo.status)
     }
 
-    private fun setupMemoStatus(memo: Memo) {
-        val status = memo.status
+    private fun applyMemoStatus(status: Int) {
         if (status == MemoStatus.COMPLETED.code || memo.ctgr == MemoStatus.DELETED.code) {
             disableEditingForCompletedOrDeletedMemo(status)
         } else {
@@ -238,13 +251,7 @@ class EditActivity : BaseWriteActivity(), CallbackListener {
             val updatedContentAttribute = getUpdatedContentAttribute()
             val updatedPriority = getUpdatedPriority()
 
-            if (updatedTitle != memo.title) {
-                isContentChanged = true
-            }
-            if (updatedContent != memo.content) {
-                isContentChanged = true
-            }
-            if (updatedContentAttribute != memo.contentAttribute) {
+            if (updatedTitle != memo.title || updatedContent != memo.content || updatedContentAttribute != memo.contentAttribute) {
                 isContentChanged = true
             }
             if (mCtgr != memo.ctgr) {
@@ -318,18 +325,23 @@ class EditActivity : BaseWriteActivity(), CallbackListener {
         this.finish()
     }
 
-    fun changeToModify() {
+    private fun changeToModify() {
         readmode = false
         binding.btnMode.setImageResource(R.drawable.baseline_mode_edit_24)
         binding.writeContent.keyListener = originalKeyListener
     }
 
-    fun changeToRead() {
+    private fun changeToRead() {
         readmode = true
         binding.btnMode.setImageResource(R.drawable.baseline_chrome_reader_mode_24)
         originalKeyListener = binding.writeContent.keyListener
         binding.writeContent.clearFocus()
         binding.writeContent.keyListener = null
         softkeyboardHide()
+    }
+
+    private fun softkeyboardHide() { // 키보드 숨기기
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.writeContent.windowToken, 0)
     }
 }

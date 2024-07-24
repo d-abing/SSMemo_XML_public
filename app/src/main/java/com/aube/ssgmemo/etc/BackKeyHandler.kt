@@ -2,7 +2,6 @@ package com.aube.ssgmemo.etc
 
 import android.app.Activity
 import com.aube.ssgmemo.R
-import com.aube.ssgmemo.callback.CallbackListener
 import io.github.muddz.styleabletoast.StyleableToast
 
 class BackKeyHandler(private val activity: Activity) {

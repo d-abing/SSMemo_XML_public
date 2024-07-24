@@ -1,27 +1,23 @@
 package com.aube.ssgmemo.common
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.text.Editable
 import android.text.Spannable
-import android.text.Spanned
 import android.text.TextWatcher
-import android.text.method.KeyListener
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.util.TypedValue
+import android.view.ActionMode
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.widget.doOnTextChanged
@@ -39,16 +35,12 @@ abstract class BaseWriteActivity : AppCompatActivity() {
     protected var vibration = MyApplication.prefs.getString("vibration", "OFF")
     protected var largeFont = MyApplication.prefs.getString("largeFont", "OFF")
     protected var darkmode = MyApplication.prefs.getInt("darkmode", 16)
-    protected var memofont = MyApplication.prefs.getString("memofont", "")
+    private var memofont = MyApplication.prefs.getString("memofont", "")
     protected var fontSize = MyApplication.prefs.getInt("fontSize", 20)
 
-
-    // font Style
     protected var isBold = false
     protected var isItalic = false
     protected var isUnderline = false
-
-    protected var originalKeyListener: KeyListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,24 +49,16 @@ abstract class BaseWriteActivity : AppCompatActivity() {
 
         setupUI()
         setupListeners()
-        //initializeAds()
+        // initializeAds()
     }
 
     protected open fun setupUI() {
-        applyFontSettings()
         applyDarkMode()
+        applyFontSettings()
         setupCategorySpinner()
         applyAlignment()
         setupFontSizeSpinner()
         adjustVisibility()
-    }
-
-    protected fun applyFontSettings() {
-        if (memofont.isNotEmpty()) {
-            val typeface = Typeface.createFromAsset(assets, "font/$memofont.ttf")
-            binding.writeTitle.typeface = typeface
-            binding.writeContent.typeface = typeface
-        }
     }
 
     protected fun applyDarkMode() {
@@ -85,6 +69,15 @@ abstract class BaseWriteActivity : AppCompatActivity() {
             binding.category.setBackgroundResource(R.drawable.bg_spinner2)
         }
     }
+
+    protected fun applyFontSettings() {
+        if (memofont.isNotEmpty()) {
+            val typeface = Typeface.createFromAsset(assets, "font/$memofont.ttf")
+            binding.writeTitle.typeface = typeface
+            binding.writeContent.typeface = typeface
+        }
+    }
+
 
     protected fun setupCategorySpinner() {
         val ctgrList = mutableListOf(
@@ -108,11 +101,10 @@ abstract class BaseWriteActivity : AppCompatActivity() {
 
     protected fun applyAlignment() {
         val gravity = binding.writeContent.gravity
-
         when (gravity) {
-            Gravity.START or Gravity.TOP -> setupLeftAlignButtonColor()
-            Gravity.CENTER_HORIZONTAL or Gravity.TOP -> setupCenterAlignButtonColor()
-            Gravity.END or Gravity.TOP -> setupRightAlignButtonColor()
+            Gravity.START or Gravity.TOP -> setupAlignmentButtonsColor(Gravity.START)
+            Gravity.CENTER_HORIZONTAL or Gravity.TOP -> setupAlignmentButtonsColor(Gravity.CENTER_HORIZONTAL)
+            Gravity.END or Gravity.TOP -> setupAlignmentButtonsColor(Gravity.END)
         }
     }
 
@@ -155,10 +147,13 @@ abstract class BaseWriteActivity : AppCompatActivity() {
     }
 
     protected fun changeFontSize(fontSize: String) {
-        val fontSizeInDp = fontSize.toInt()
-        val scale = resources.displayMetrics.density
-        val fontSizeInPixels = (fontSizeInDp * scale + 0.5f).toInt()
+        val fontSizeInPixels = dpToPx(fontSize.toInt())
         binding.writeContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSizeInPixels.toFloat())
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        val scale = resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
     }
 
     protected fun adjustVisibility() {
@@ -190,56 +185,79 @@ abstract class BaseWriteActivity : AppCompatActivity() {
         constraintSet.applyTo(binding.writeLayout)
     }
 
-    protected open fun setupListeners() {
-        binding.writeContent.doOnTextChanged { _, _, _, _ -> handleTextChanged() }
-        binding.writeContent.addTextChangedListener(createTextWatcher())
-        setupFontStyleButtons()
-        setupAlignmentButtons()
-    }
-
     /*protected fun initializeAds() {
         MobileAds.initialize(this) {}
         val adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
     }*/
 
-    protected fun handleTextChanged() {
+    protected open fun setupListeners() {
+        binding.writeContent.doOnTextChanged { _, _, _, _ -> handleTextChanged() }
+        binding.writeContent.addTextChangedListener(createTextWatcher())
+        binding.writeContent.customSelectionActionModeCallback = object : ActionMode.Callback {
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean = true
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                updateButtonStyles()
+                return false
+            }
+
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean = false
+            override fun onDestroyActionMode(mode: ActionMode?) {
+                applyButtonStyles()
+            }
+        }
+        setupFontStyleButtons()
+        setupAlignmentButtons()
+    }
+
+    private fun handleTextChanged() {
         val cursorPosition = binding.writeContent.selectionStart
         val cursorLineIndex = binding.writeContent.layout.getLineForOffset(cursorPosition)
         val lastLineIndex =
             binding.writeContent.layout.getLineForOffset(binding.writeContent.length())
-        val fontHeight = fontSize * 4
-        val maxline = (binding.writeContent.height - 10) / fontHeight
+        val fontHeight = dpToPx(fontSize + 10)
+        val maxLine = (binding.writeContent.height - dpToPx(20)) / fontHeight
 
-        scrollChange(cursorLineIndex, lastLineIndex, maxline)
+        scrollChange(cursorLineIndex, lastLineIndex, maxLine)
     }
 
-    private fun scrollChange(cursorLineIndex: Int, lastLineIndex: Int, maxline: Int) {
-        val scrollValues = mapOf(
-            20 to Pair(86, 82),
-            22 to Pair(60, 88),
-            24 to Pair(116, 94),
-            26 to Pair(85, 102),
-            28 to Pair(135, 108),
-            30 to Pair(70, 114),
-            32 to Pair(125, 122),
-            34 to Pair(169, 128),
-            36 to Pair(130, 136)
-        )
-
-        val (base, multi) = scrollValues[fontSize] ?: Pair(0, 0)
-        val x = cursorLineIndex - maxline
-        val scrollY = base + multi * x
-
-        if (cursorLineIndex > (maxline - 1) && cursorLineIndex == lastLineIndex) {
+    private fun scrollChange(cursorLineIndex: Int, lastLineIndex: Int, maxLine: Int) {
+        if (cursorLineIndex > (maxLine - 1) && cursorLineIndex == lastLineIndex) {
             val scrollAmount =
-                binding.writeContent.layout.getLineBottom(binding.writeContent.lineCount - 1) - binding.writeContent.height + 65
+                binding.writeContent.layout.getLineBottom(binding.writeContent.lineCount - 1) - binding.writeContent.height + dpToPx(
+                    fontSize
+                )
             binding.writeContent.scrollTo(0, scrollAmount)
-        } else if (cursorLineIndex > (maxline - 1) && binding.writeContent.scrollY !in scrollY..(scrollY + multi * (maxline - 1))) {
-            binding.writeContent.scrollTo(0, scrollY)
-        } else if (cursorLineIndex <= (maxline - 1)) {
+        } else if (cursorLineIndex > (maxLine - 1) && cursorLineIndex < lastLineIndex) {
+            val scrollAmount =
+                binding.writeContent.layout.getLineBottom(cursorLineIndex) - binding.writeContent.height + dpToPx(
+                    fontSize
+                )
+            binding.writeContent.scrollTo(0, scrollAmount)
+        } else if (cursorLineIndex <= (maxLine - 1)) {
             binding.writeContent.scrollTo(0, 0)
         }
+    }
+
+    private fun setupAlignmentButtons() {
+        binding.leftAlign.setOnClickListener {
+            binding.writeContent.gravity = Gravity.START
+            setupAlignmentButtonsColor(Gravity.START)
+        }
+        binding.centerAlign.setOnClickListener {
+            binding.writeContent.gravity = Gravity.CENTER_HORIZONTAL
+            setupAlignmentButtonsColor(Gravity.CENTER_HORIZONTAL)
+        }
+        binding.rightAlign.setOnClickListener {
+            binding.writeContent.gravity = Gravity.END
+            setupAlignmentButtonsColor(Gravity.END)
+        }
+    }
+
+    private fun setupAlignmentButtonsColor(gravity: Int) {
+        binding.leftAlign.setBackgroundResource(if (gravity == Gravity.START) R.drawable.text_style_selected_background else R.drawable.text_style_background)
+        binding.centerAlign.setBackgroundResource(if (gravity == Gravity.CENTER_HORIZONTAL) R.drawable.text_style_selected_background else R.drawable.text_style_background)
+        binding.rightAlign.setBackgroundResource(if (gravity == Gravity.END) R.drawable.text_style_selected_background else R.drawable.text_style_background)
     }
 
     protected open fun createTextWatcher() = object : TextWatcher {
@@ -252,171 +270,198 @@ abstract class BaseWriteActivity : AppCompatActivity() {
 
     protected fun applyTextStyles(s: Editable?) {
         val cursorPosition = binding.writeContent.selectionStart
-        if (isBold) s?.setSpan(
-            StyleSpan(Typeface.BOLD),
-            cursorPosition - 1,
-            cursorPosition,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        if (cursorPosition != 0) {
+            if (isBold) applyTextStyle(s, Style.BOLD, cursorPosition - 1, cursorPosition)
+            if (isItalic) applyTextStyle(s, Style.ITALIC, cursorPosition - 1, cursorPosition)
+            if (isUnderline) applyTextStyle(s, Style.UNDERLINE, cursorPosition - 1, cursorPosition)
+        }
+    }
+
+    private fun applyTextStyle(s: Editable?, style: Style, start: Int, end: Int) {
+        s?.setSpan(
+            getSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
-        if (isItalic) s?.setSpan(
-            StyleSpan(Typeface.ITALIC),
-            cursorPosition - 1,
-            cursorPosition,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        if (isUnderline) s?.setSpan(
-            UnderlineSpan(),
-            cursorPosition - 1,
-            cursorPosition,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
+    }
+
+    private fun getSpan(style: Style): Any {
+        return when (style) {
+            Style.BOLD -> StyleSpan(Typeface.BOLD)
+            Style.ITALIC -> StyleSpan(Typeface.ITALIC)
+            Style.UNDERLINE -> UnderlineSpan()
+        }
+    }
+
+    private fun updateButtonStyles() {
+        val start = binding.writeContent.selectionStart
+        val end = binding.writeContent.selectionEnd
+        val s = binding.writeContent.text
+
+        if (start != end) {
+            updateButtonStyle(s, start, end, Style.BOLD, binding.bold)
+            updateButtonStyle(s, start, end, Style.ITALIC, binding.italic)
+            updateButtonStyle(s, start, end, Style.UNDERLINE, binding.underline)
+        }
+    }
+
+    private fun updateButtonStyle(
+        s: Editable,
+        start: Int,
+        end: Int,
+        style: Style,
+        button: ImageView
+    ) {
+        var allStyled = true
+        for (i in start until end) {
+            val characterSpans = when (style) {
+                Style.BOLD -> s.getSpans(i, i + 1, StyleSpan::class.java)
+                    .filter { it.style == Typeface.BOLD }
+
+                Style.ITALIC -> s.getSpans(i, i + 1, StyleSpan::class.java)
+                    .filter { it.style == Typeface.ITALIC }
+
+                Style.UNDERLINE -> s.getSpans(i, i + 1, UnderlineSpan::class.java).toList()
+            }
+            if (characterSpans.isEmpty()) {
+                allStyled = false
+                break
+            }
+        }
+
+        if (allStyled) {
+            button.setBackgroundResource(R.drawable.text_style_selected_background)
+        } else {
+            button.setBackgroundResource(R.drawable.text_style_background)
+        }
+    }
+
+    private fun applyButtonStyles() {
+        binding.bold.setBackgroundResource(if (isBold) R.drawable.text_style_selected_background else R.drawable.text_style_background)
+        binding.italic.setBackgroundResource(if (isItalic) R.drawable.text_style_selected_background else R.drawable.text_style_background)
+        binding.underline.setBackgroundResource(if (isUnderline) R.drawable.text_style_selected_background else R.drawable.text_style_background)
     }
 
     private fun setupFontStyleButtons() {
-        binding.bold.setOnClickListener { fontStyleChange("bold") }
-        binding.italic.setOnClickListener { fontStyleChange("italic") }
-        binding.underline.setOnClickListener { fontStyleChange("underline") }
+        binding.bold.setOnClickListener { fontStyleChange(Style.BOLD) }
+        binding.italic.setOnClickListener { fontStyleChange(Style.ITALIC) }
+        binding.underline.setOnClickListener { fontStyleChange(Style.UNDERLINE) }
     }
 
-    private fun setupAlignmentButtons() {
-        binding.leftAlign.setOnClickListener {
-            binding.writeContent.gravity = Gravity.START
-            setupLeftAlignButtonColor()
-        }
-        binding.centerAlign.setOnClickListener {
-            binding.writeContent.gravity = Gravity.CENTER_HORIZONTAL
-            setupCenterAlignButtonColor()
-        }
-        binding.rightAlign.setOnClickListener {
-            binding.writeContent.gravity = Gravity.END
-            setupRightAlignButtonColor()
-        }
-    }
-
-    private fun setupLeftAlignButtonColor() {
-        binding.leftAlign.setBackgroundResource(R.drawable.text_style_selected_background)
-        binding.centerAlign.setBackgroundResource(R.drawable.text_style_background)
-        binding.rightAlign.setBackgroundResource(R.drawable.text_style_background)
-    }
-
-    private fun setupCenterAlignButtonColor() {
-        binding.centerAlign.setBackgroundResource(R.drawable.text_style_selected_background)
-        binding.leftAlign.setBackgroundResource(R.drawable.text_style_background)
-        binding.rightAlign.setBackgroundResource(R.drawable.text_style_background)
-    }
-
-    private fun setupRightAlignButtonColor() {
-        binding.rightAlign.setBackgroundResource(R.drawable.text_style_selected_background)
-        binding.leftAlign.setBackgroundResource(R.drawable.text_style_background)
-        binding.centerAlign.setBackgroundResource(R.drawable.text_style_background)
-    }
-
-
-    private fun fontStyleChange(style: String) {
+    private fun fontStyleChange(style: Style) {
         val start = binding.writeContent.selectionStart
         val end = binding.writeContent.selectionEnd
-        if (start == end) {
+        val text = binding.writeContent.text.substring(start, end)
+
+        if (start == end && text.trim().isEmpty()) {
             toggleFontStyle(style)
         } else {
-            applyFontStyleToSelection(style, start, end)
+            applyFontStyleToSelection(binding.writeContent.text, style, start, end)
         }
     }
 
-    private fun toggleFontStyle(style: String) {
+    private fun toggleFontStyle(style: Style) {
         when (style) {
-            "bold" -> isBold = !isBold
-            "italic" -> isItalic = !isItalic
-            "underline" -> isUnderline = !isUnderline
+            Style.BOLD -> isBold = !isBold
+            Style.ITALIC -> isItalic = !isItalic
+            Style.UNDERLINE -> isUnderline = !isUnderline
         }
 
-        if (isBold) {
-            binding.bold.setBackgroundResource(R.drawable.text_style_selected_background)
-        } else {
-            binding.bold.setBackgroundResource(R.drawable.text_style_background)
-        }
-
-        if (isItalic) {
-            binding.italic.setBackgroundResource(R.drawable.text_style_selected_background)
-        } else {
-            binding.italic.setBackgroundResource(R.drawable.text_style_background)
-        }
-
-        if (isUnderline) {
-            binding.underline.setBackgroundResource(R.drawable.text_style_selected_background)
-        } else {
-            binding.underline.setBackgroundResource(R.drawable.text_style_background)
-        }
-
-        if (isBold || isItalic || isUnderline) {
-            insertSpaceToApplyStyle()
-        }
+        applyButtonStyles()
     }
 
-    private fun insertSpaceToApplyStyle() {
-        val cursorPosition = binding.writeContent.selectionStart
-        binding.writeContent.text?.insert(cursorPosition, " ")
-        binding.writeContent.setSelection(cursorPosition, cursorPosition + 1)
-    }
+    private fun applyFontStyleToSelection(s: Editable?, style: Style, start: Int, end: Int) {
+        var allStyled = true
+        val spansToRemove = mutableSetOf<Any>()
 
-    private fun applyFontStyleToSelection(style: String, start: Int, end: Int) {
         when (style) {
-            "bold" -> binding.writeContent.text?.setSpan(
-                StyleSpan(Typeface.BOLD),
-                start,
-                end,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            Style.BOLD -> {
+                val spans = s!!.getSpans(start, end, StyleSpan::class.java)
+                for (i in start until end) {
+                    val spansAtPos = spans.filter {
+                        it.style == Typeface.BOLD && s.getSpanStart(it) <= i && s.getSpanEnd(it) >= i
+                    }
+                    if (spansAtPos.isEmpty()) {
+                        allStyled = false
+                        break
+                    } else {
+                        spansToRemove.addAll(spansAtPos)
+                    }
+                }
+            }
 
-            "italic" -> binding.writeContent.text?.setSpan(
-                StyleSpan(Typeface.ITALIC),
-                start,
-                end,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            Style.ITALIC -> {
+                val spans = s!!.getSpans(start, end, StyleSpan::class.java)
+                for (i in start until end) {
+                    val spansAtPos = spans.filter {
+                        it.style == Typeface.ITALIC && s.getSpanStart(it) <= i && s.getSpanEnd(it) >= i
+                    }
+                    if (spansAtPos.isEmpty()) {
+                        allStyled = false
+                        break
+                    } else {
+                        spansToRemove.addAll(spansAtPos)
+                    }
+                }
+            }
 
-            "underline" -> binding.writeContent.text?.setSpan(
-                UnderlineSpan(),
-                start,
-                end,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+            Style.UNDERLINE -> {
+                val spans = s!!.getSpans(start, end, UnderlineSpan::class.java)
+                for (i in start until end) {
+                    val spansAtPos =
+                        spans.filter { s.getSpanStart(it) <= i && s.getSpanEnd(it) >= i }
+                    if (spansAtPos.isEmpty()) {
+                        allStyled = false
+                        break
+                    } else {
+                        spansToRemove.addAll(spansAtPos)
+                    }
+                }
+            }
+        }
+
+        // 스타일 적용 해제
+        if (allStyled) {
+            spansToRemove.forEach { span ->
+                val spanStart = s.getSpanStart(span)
+                val spanEnd = s.getSpanEnd(span)
+
+                if (spanStart <= start) {
+                    s.setSpan(span, spanStart, start, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                if (spanEnd > end) {
+                    s.setSpan(span, end, spanEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+                s.removeSpan(span)
+            }
+        } else {
+            // 스타일 적용
+            when (style) {
+                Style.BOLD -> s.setSpan(
+                    StyleSpan(Typeface.BOLD),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                Style.ITALIC -> s.setSpan(
+                    StyleSpan(Typeface.ITALIC),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                Style.UNDERLINE -> s.setSpan(
+                    UnderlineSpan(),
+                    start,
+                    end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
     }
+}
 
-    protected fun softkeyboardHide() { // 키보드 숨기기
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.writeContent.windowToken, 0)
-    }
-
-    protected fun triggerVibration() {
-        if (vibration == "ON") {
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            vibrator.vibrate(VibrationEffect.createOneShot(200, 50))
-        }
-    }
-
-    protected fun copyToClipboard(text: String) { // 클립보드에 복사
-        val clipboardManager =
-            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("label", text)
-        clipboardManager.setPrimaryClip(clipData)
-    }
-
-    protected fun animateSaveButton() {
-        binding.saveMemo.setImageResource(R.drawable.save2)
-        android.os.Handler()
-            .postDelayed({ binding.saveMemo.setImageResource(R.drawable.save1) }, 200)
-    }
-
-    protected fun resetFields() {
-        isBold = false
-        isItalic = false
-        isUnderline = false
-        binding.writeTitle.setText("")
-        binding.writeContent.setText("")
-    }
-
-    protected fun <K, V> getKey(map: Map<K, V>, target: V): K {
-        return map.keys.first { target == map[it] }
-    }
+enum class Style {
+    BOLD,
+    ITALIC,
+    UNDERLINE
 }

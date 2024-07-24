@@ -195,14 +195,9 @@ class ClassifyActivity : AppCompatActivity(), CallbackListener {
                 )
             )
         }
-        moveCtgr(currentMemoIdx, ctgrIdx, 1)
-    }
-
-    override fun moveCtgr(memoIdx: Int?, ctgrIdx: Int, status: Int) {
-        helper.updateMemoCtgr(memoIdx, 0, ctgrIdx)
+        helper.updateMemoCtgr(currentMemoIdx, 0, ctgrIdx)
         refreshMemoList()
     }
-
 
     override fun moveCtgrList(oldCtgrIdx: Int, newCtgrIdx: Int) {
         helper.updateMemoCtgr(currentMemoIdx, 0, newCtgrIdx)

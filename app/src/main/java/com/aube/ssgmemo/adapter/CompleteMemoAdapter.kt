@@ -29,6 +29,8 @@ class CompleteMemoAdapter(private val context: Context) :
             if (item is Memo) {
                 if (darkmode == 32) {
                     binding.completeLayout.setBackgroundResource(R.drawable.memoback2)
+                } else {
+                    binding.completeLayout.setBackgroundResource(R.drawable.memoback1)
                 }
                 showMemo(item, binding.completeTitle, binding.completeContent, binding.completeDate)
                 binding.completeTitle.visibility = View.VISIBLE

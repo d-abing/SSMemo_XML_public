@@ -111,9 +111,9 @@ class ViewMemoActivity : AppCompatActivity(), CallbackListener {
         binding.selectBtn.setOnClickListener { toggleMode() }
         binding.addMemo.setOnClickListener { navigateToWriteActivity() }
         binding.selectAll.setOnClickListener { toggleSelectAll() }
-        binding.moveSelected.setOnClickListener { handleMoveSelected() }
-        binding.completeSelected.setOnClickListener { handleCompleteSelected() }
-        binding.deleteSelected.setOnClickListener { handleDeleteSelected() }
+        binding.moveSelected.setOnClickListener { handleButton(::moveFragmentOpen) }
+        binding.completeSelected.setOnClickListener { handleButton(::completeFragmentOpen) }
+        binding.deleteSelected.setOnClickListener { handleButton(::deleteFragmentOpen) }
     }
 
     private fun toggleMode() {
@@ -149,38 +149,14 @@ class ViewMemoActivity : AppCompatActivity(), CallbackListener {
         }
     }
 
-    private fun handleMoveSelected() {
+    private fun handleButton(openFragment: (Int?) -> Unit) {
         when {
             viewMemoAdapter.selectedList.isEmpty() -> {
                 StyleableToast.makeText(this, "선택된 값이 없습니다", R.style.toast).show()
             }
 
             else -> {
-                moveFragmentOpen(ctgrIdx)
-            }
-        }
-    }
-
-    private fun handleCompleteSelected() {
-        when {
-            viewMemoAdapter.selectedList.isEmpty() -> {
-                StyleableToast.makeText(this, "선택된 값이 없습니다", R.style.toast).show()
-            }
-
-            else -> {
-                completeFragmentOpen()
-            }
-        }
-    }
-
-    private fun handleDeleteSelected() {
-        when {
-            viewMemoAdapter.selectedList.isEmpty() -> {
-                StyleableToast.makeText(this, "선택된 값이 없습니다", R.style.toast).show()
-            }
-
-            else -> {
-                deleteFragmentOpen(ctgrIdx)
+                openFragment(ctgrIdx)
             }
         }
     }
@@ -224,25 +200,25 @@ class ViewMemoActivity : AppCompatActivity(), CallbackListener {
         completeFragment.show(supportFragmentManager, "memoComplete")
     }
 
-    private fun moveFragmentOpen(ctgrIdx: Int) {
+    private fun moveFragmentOpen(ctgrIdx: Int?) {
         val moveFragment = MemoMoveFragment(this)
         val bundle = Bundle().apply {
-            putInt("ctgrIdx", ctgrIdx)
+            putInt("ctgrIdx", ctgrIdx!!)
         }
         moveFragment.helper = helper
         moveFragment.arguments = bundle
         moveFragment.show(supportFragmentManager, "memoMove")
     }
 
-    private fun completeFragmentOpen() {
+    private fun completeFragmentOpen(ctgrIdx: Int?) {
         val completeFragment = CompleteFragment(this)
         completeFragment.show(supportFragmentManager, "memoMove")
     }
 
-    private fun deleteFragmentOpen(ctgrIdx: Int) {
+    private fun deleteFragmentOpen(ctgrIdx: Int?) {
         val deleteFragment = MemoDeleteFragment(this)
         val bundle = Bundle().apply {
-            putInt("ctgrIdx", ctgrIdx)
+            putInt("ctgrIdx", ctgrIdx!!)
         }
         deleteFragment.arguments = bundle
         deleteFragment.show(supportFragmentManager, "memoDelete")
@@ -333,7 +309,7 @@ class ViewMemoActivity : AppCompatActivity(), CallbackListener {
                         }
                     })
                 }
-            } else {
+            } else if (mode == ModeStatus.SELECT.code) {
                 completeButton.visibility = View.GONE
                 toggleButton.visibility = View.VISIBLE
                 itemTouchHelperCallback.setMode(ModeStatus.SELECT.code)

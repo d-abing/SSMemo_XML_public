@@ -68,7 +68,7 @@
         android:gravity="top"
         android:hint="@string/write_hint"
         android:inputType="textMultiLine"
-        android:lineSpacingExtra="5sp"
+        android:lineSpacingExtra="5dp"
         android:linksClickable="true"
         android:overScrollMode="always"
         android:padding="10dp"
@@ -85,7 +85,7 @@
     <LinearLayout
         android:id="@+id/fontBar"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="44dp"
         android:background="@color/white"
         android:orientation="horizontal"
         android:paddingVertical="4dp"
@@ -195,8 +195,7 @@
         android:layout_height="49dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="#FFFFFF"
-        android:visibility="visible"
+        android:background="@color/adview_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
